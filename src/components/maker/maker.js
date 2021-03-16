@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Editor from '../editor/editor';
 import Footer from '../footer/footer';
@@ -7,8 +7,8 @@ import Preview from '../preview/preview';
 import styles from './maker.module.css';
 
 const Maker = ({ authService }) => {
-    const [cards, setCards] = useState([
-        {
+    const [cards, setCards] = useState({
+        1: {
             id: 1,
             name: 'choi hyeon ji',
             company: 'google',
@@ -19,7 +19,7 @@ const Maker = ({ authService }) => {
             fileName: 'hj',
             fileURL: 'hj.png',
         },
-        {
+        2: {
             id: 2,
             name: 'jay',
             company: 'ola',
@@ -30,7 +30,7 @@ const Maker = ({ authService }) => {
             fileName: 'hj',
             fileURL: 'hj.png',
         },
-        {
+        3: {
             id: 3,
             name: 'hyeon3',
             company: 'google',
@@ -41,20 +41,46 @@ const Maker = ({ authService }) => {
             fileName: 'hj',
             fileURL: null,
         },
-    ]);
+    });
 
     const history = useHistory();
 
+    //로그아웃 로직
     const onLogout = () => {
         authService.logout();
-        history.push('/');
+    };
+    //updateCard
+    const updateCard = (card) => {
+        setCards((cards) => {
+            const updated = { ...cards };
+            updated[card.id] = card;
+            return updated;
+        });
     };
 
+    //deleteCard
+    const deleteCard = (card) => {
+        setCards((cards) => {
+            const updated = { ...cards };
+            delete updated[card.id];
+            return updated;
+        });
+    };
+
+    //로그인상태체크하고
+    useEffect(() => {
+        authService.onAuthChange((user) => {
+            if (!user) {
+                //유저가 없다면 홈화면을 렌더한다
+                history.push('/');
+            }
+        });
+    });
     return (
         <section className={styles.maker}>
             <Header className={styles.header} onLogout={onLogout} />
             <div className={styles.container}>
-                <Editor />
+                <Editor cards={cards} updateCard={updateCard} deleteCard={deleteCard} />
                 <Preview cards={cards} />
             </div>
             <Footer className={styles.footer} />

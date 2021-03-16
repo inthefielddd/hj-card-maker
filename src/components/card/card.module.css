@@ -1,4 +1,4 @@
-@value makerBlack,makerShadow,makerWheat from "../../common/colors.css";
+@value makerBlack, makerShadow,makerWheat,makerWhite,makerColorful from "../../common/colors.css";
 
 .card{
     max-width: 30em;
@@ -11,6 +11,20 @@
     padding:0.2em 0;
 }
 
+.card.dark{
+    background-color: makerBlack;
+    color:makerWhite;
+}
+
+.card.light{
+    background-color: makerWhite;
+    color:makerBlack;
+}
+
+.card.colorful{
+    background:makerColorful;
+    color:makerWhite;
+}
 .avatar{
     width: 10em;
     height: 10em;
