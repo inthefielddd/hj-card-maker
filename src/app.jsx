@@ -3,7 +3,7 @@ import Login from './components/login/login';
 import Maker from './components/maker/maker';
 import styles from './app.module.css';
 
-function App({ authService}) {
+function App({ authService, FileInput}) {
     return (
         <div className={styles.app}>
             <BrowserRouter>
@@ -12,7 +12,7 @@ function App({ authService}) {
                         <Login authService={authService} />
                     </Route>
                     <Route exact path="/maker">
-                        <Maker authService={authService} />
+                        <Maker authService={authService} FileInput={FileInput}/>
                     </Route>
                 </Switch>
             </BrowserRouter>

@@ -1,17 +1,23 @@
 import React from 'react';
 import Button from '../button/button';
-import ImageFileInput from '../image_file_input/image_file_input';
 import styles from './card_edit_form.module.css';
 
-const CardEditForm = ({ card, updateCard, deleteCard }) => {
+const CardEditForm = ({ card, updateCard, deleteCard, FileInput }) => {
     //card
-    const { name, company, theme, title, email, message, fileName, fileURL } = card;
+    const { name, company, theme, title, email, message, fileName } = card;
 
     //delete를 수행할 로직
     const onSubmit = () => {
         deleteCard(card);
     };
-
+    //파일 값을 업데이트 해주는 로직
+    const onFileChange = (file) => {
+        updateCard({
+            ...card,
+            fileName: file.name,
+            fileURL: file.url,
+        });
+    };
     //값이 변할때 수행할 로직
     const onChange = (event) => {
         if (!event.currentTarget == null) {
@@ -37,7 +43,7 @@ const CardEditForm = ({ card, updateCard, deleteCard }) => {
             <input className={styles.input} type="text" value={email} name="email" onChange={onChange} />
             <textarea className={styles.textarea} name="message" value={message} cols="10" onChange={onChange} />
             <div className={styles.fileInput}>
-                <ImageFileInput />
+                <FileInput name={fileName} onFileChange={onFileChange} />
             </div>
             <Button name="Delete" className={styles.button} onClick={onSubmit} />
         </form>
