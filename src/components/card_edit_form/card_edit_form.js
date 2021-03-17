@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Button from '../button/button';
 import styles from './card_edit_form.module.css';
 
-const CardEditForm = ({ card, updateCard, deleteCard, FileInput }) => {
+const CardEditForm = memo(({ FileInput, card, updateCard, deleteCard }) => {
     //card
     const { name, company, theme, title, email, message, fileName } = card;
 
@@ -48,6 +48,5 @@ const CardEditForm = ({ card, updateCard, deleteCard, FileInput }) => {
             <Button name="Delete" className={styles.button} onClick={onSubmit} />
         </form>
     );
-};
-
+});
 export default CardEditForm;

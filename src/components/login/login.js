@@ -8,6 +8,9 @@ const Login = ({ authService }) => {
     const history = useHistory();
 
     const goToMaker = (userId) => {
+        //goToMaker함수에서 "/maker"로 넘어가면서
+        //state에 id값저장
+        //이 id값은 onLogin에서 받아왔다
         history.push({
             pathname: '/maker',
             state: { id: userId },

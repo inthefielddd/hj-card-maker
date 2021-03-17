@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Editor from '../editor/editor';
 import Footer from '../footer/footer';
@@ -6,49 +6,47 @@ import Header from '../header/header';
 import Preview from '../preview/preview';
 import styles from './maker.module.css';
 
-const Maker = ({ authService, FileInput }) => {
-    const [cards, setCards] = useState({
-        1: {
-            id: 1,
-            name: 'choi hyeon ji',
-            company: 'google',
-            theme: 'dark',
-            title: 'signer',
-            email: 'chl12005@naver.com',
-            message: 'i can do it',
-            fileName: null,
-            fileURL: null,
-        },
-        2: {
-            id: 2,
-            name: 'jay',
-            company: 'ola',
-            theme: 'light',
-            title: 'engineer',
-            email: '1@naver.com',
-            message: 'i can do it',
-            fileName: '',
-            fileURL: '',
-        },
-        3: {
-            id: 3,
-            name: 'hyeon3',
-            company: 'google',
-            theme: 'colorful',
-            title: 'signer',
-            email: 'hey@naver.com',
-            message: 'i can do it',
-            fileName: 'hj',
-            fileURL: null,
-        },
-    });
-
+const Maker = ({ authService, FileInput, cardRepository }) => {
+    console.log('Maker');
     const history = useHistory();
+    const historyState = history?.location?.state;
+    const [cards, setCards] = useState({});
+    const [userId, setUserId] = useState(historyState && historyState.id);
+    //userId와 cardRepository가 변경될때마다
+    //작동한다
+    useEffect(() => {
+        //만약 유저값이 없다면
+        //아무것도 안해준다
+        if (!userId) {
+            return;
+        }
+        //있다면
+        const stopSync = cardRepository.syncCards(userId, (cards) => {
+            setCards(cards);
+        });
+        //있다면
+        return () => stopSync();
+    }, [userId, cardRepository]);
+
+    //로그인상태에따라 작동하는 useEffect
+    //authService와 userId와 history
+    //변경될때만 마운트 되게한다
+    useEffect(() => {
+        authService.onAuthChange((user) => {
+            if (user) {
+                //유저가 있다면
+                setUserId(userId);
+            } else {
+                //유저가 없다면 홈화면을 렌더한다
+                history.push('/');
+            }
+        });
+    }, [userId, authService, history]);
 
     //로그아웃 로직
-    const onLogout = () => {
+    const onLogout = useCallback(() => {
         authService.logout();
-    };
+    }, [authService]);
 
     const createOrUpdateCard = (card) => {
         setCards((cards) => {
@@ -56,6 +54,7 @@ const Maker = ({ authService, FileInput }) => {
             updated[card.id] = card;
             return updated;
         });
+        cardRepository.saveCard(userId, card);
     };
 
     //deleteCard
@@ -65,17 +64,9 @@ const Maker = ({ authService, FileInput }) => {
             delete updated[card.id];
             return updated;
         });
+        cardRepository.removeCard(userId, card);
     };
 
-    //로그인상태체크하고
-    useEffect(() => {
-        authService.onAuthChange((user) => {
-            if (!user) {
-                //유저가 없다면 홈화면을 렌더한다
-                history.push('/');
-            }
-        });
-    });
     return (
         <section className={styles.maker}>
             <Header className={styles.header} onLogout={onLogout} />

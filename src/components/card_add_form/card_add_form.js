@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import Button from '../button/button';
 import styles from './card_add_form.module.css';
 
-const CardAddForm = ({ onAdd, FileInput }) => {
+const CardAddForm = memo(({ onAdd, FileInput }) => {
     const formRef = useRef();
     const nameRef = useRef();
     const companyRef = useRef();
@@ -31,6 +31,7 @@ const CardAddForm = ({ onAdd, FileInput }) => {
             name: nameRef.current.value || '',
             company: companyRef.current.value || '',
             theme: themeRef.current.value || '',
+            title: titleRef.current.value || '',
             emailRef: emailRef.current.value || '',
             message: messageRef.current.value || '',
             fileName: file.fileName || '',
@@ -40,25 +41,24 @@ const CardAddForm = ({ onAdd, FileInput }) => {
         setFile({ fileName: null, fileURL: null });
         onAdd(card);
     };
-
     return (
         <form ref={formRef} className={styles.form}>
-            <input ref={nameRef} className={styles.input} type="text" name="name" />
-            <input ref={companyRef} className={styles.input} type="text" name="company" />
-            <select ref={themeRef} className={styles.select} name="theme">
+            <input ref={nameRef} className={styles.input} type="text" name="name" placeholder="Name" />
+            <input ref={companyRef} className={styles.input} type="text" name="company" placeholder="company" />
+            <select ref={themeRef} className={styles.select} name="theme" placeholder="Theme">
                 <option placeholder="light">light</option>
                 <option placeholder="dark">dark</option>
                 <option placeholder="colorful">colorful</option>
             </select>
-            <input ref={titleRef} className={styles.input} type="text" name="title" />
-            <input ref={emailRef} className={styles.input} type="text" name="email" />
-            <textarea ref={messageRef} className={styles.textarea} name="message" cols="10" />
+            <input ref={titleRef} className={styles.input} type="text" name="title" placeholder="Title" />
+            <input ref={emailRef} className={styles.input} type="text" name="email" placeholder="Email" />
+            <textarea ref={messageRef} className={styles.textarea} name="message" cols="10" placeholder="Message" />
             <div className={styles.fileInput}>
                 <FileInput name={file.fileName} onFileChange={onFileChange} />
             </div>
             <Button name="Add" className={styles.button} onClick={onSubmit} />
         </form>
     );
-};
+});
 
 export default CardAddForm;
